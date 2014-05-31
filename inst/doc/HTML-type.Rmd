@@ -1,0 +1,17 @@
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Just a HTML example}
+%\VignetteDepends{}
+%\VignetteKeywords{string, misc}
+%\VignettePackage{Vmisc}
+-->
+
+# Section
+
+_note: ..._
+
+test
+
+## Subsection
+
+test

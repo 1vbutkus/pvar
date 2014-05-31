@@ -1,0 +1,29 @@
+\documentclass{article}
+
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Just a pdf example}
+%\VignetteDepends{}
+%\VignetteKeywords{string, misc}
+%\VignettePackage{Vmisc}
+
+
+\begin{document}
+
+\section{Section}
+test
+\subsection{subsection}
+<<graph>>=
+plot(rnorm(10))
+@
+
+\includegraphics[width=\maxwidth]{ManualGraphs/Rand} 
+
+Verbatim:
+\begin{verbatim}
+##   V1 V2 V3
+## 1  1  2  3
+## 2  4  5  6
+## 3  7  8  9
+\end{verbatim}
+
+\end{document}

@@ -1,0 +1,19 @@
+Package: pvar
+Type: Package
+Title: p-variation, calculation and application
+Version: 2.0
+Date: 2014-05-30
+Author: Vygantas Butkus
+Maintainer: WVygantas Butkus <Vygantas.Butkus@gmail.com>
+Description: The calculation of p-variation of the finite sample data
+LazyData: yes
+Imports:
+    Rcpp (>= 0.11.1)
+LinkingTo: Rcpp
+Suggests:
+    e1071,
+    testthat,
+    knitr,
+    formatR
+VignetteBuilder: knitr
+License: GPL-2
