@@ -35,38 +35,38 @@ struct pvtemppoint{
 
 // --------------------- printing functions (used only for debugging) ---------------------- // 
 
-template <class T>
-void print (T& obj, std::string ext1=" ", std::string ext2 = "\n"){
-  std::cout << ext1 << obj << ext2;
-}
-
-void print (pvpoint& obj, std::string ext1=" ",  std::string ext2="\n"){
-  std::cout << ext1 << "[" << obj.id << "]" << obj.val << ext2;
-}
-
-void print (it_PrtList& obj, std::string ext1=" ",  std::string ext2="\n"){
-  print((*obj), ext1, ext2);
-}
-
-template <class T>
-void printList (T& obj, std::string ext1="", std::string ext2="\n"){
-  typename T::iterator it=obj.begin();
-  std::cout << ext1;
-  for(it; it!=obj.end(); it++){
-     print(*it, " ", ", ");
-  }  
-  std::cout << ext2;
-}
-
-               
-void printList (std::list<pvtemppoint>& obj, std::string ext1="", std::string ext2="\n"){
-  std::list<pvtemppoint>::iterator it=obj.begin(); 
-  std::cout << ext1;
-  for(it; it!=obj.end(); it++){
-     print(*(*it).it, " ", ", ");
-  }  
-  std::cout << ext2;
-}
+//template <class T>
+//void print (T& obj, std::string ext1=" ", std::string ext2 = "\n"){
+//  Rcout << ext1 << obj << ext2;
+//}
+//
+//void print (pvpoint& obj, std::string ext1=" ",  std::string ext2="\n"){
+//  Rcout << ext1 << "[" << obj.id << "]" << obj.val << ext2;
+//}
+//
+//void print (it_PrtList& obj, std::string ext1=" ",  std::string ext2="\n"){
+//  print((*obj), ext1, ext2);
+//}
+//
+//template <class T>
+//void printList (T& obj, std::string ext1="", std::string ext2="\n"){
+//  typename T::iterator it=obj.begin();
+//  Rcout << ext1;
+//  for(it; it!=obj.end(); it++){
+//     print(*it, " ", ", ");
+//  }  
+//  Rcout << ext2;
+//}
+//
+//               
+//void printList (std::list<pvtemppoint>& obj, std::string ext1="", std::string ext2="\n"){
+//  std::list<pvtemppoint>::iterator it; 
+//  Rcout << ext1;
+//  for(it=obj.begin(); it!=obj.end(); it++){
+//     print(*(*it).it, " ", ", ");
+//  }  
+//  Rcout << ext2;
+//}
 
 
 
@@ -151,7 +151,7 @@ void prepare_prt(const NumericVector& x, std::list<pvpoint>& prt,  const double&
   (*it1_prt).pvdiff = 0;
   
   // getting all other elements
-  for (it1_prt , it2_prt; it2_prt != prt.end(); it1_prt++, it2_prt++){
+  for ( ; it2_prt != prt.end(); it1_prt++, it2_prt++){
     (*it2_prt).val = x[(*it2_prt).id];
     (*it2_prt).pvdiff = pvar_diff(x[(*it1_prt).id] - x[(*it2_prt).id], p);
   }    
@@ -172,7 +172,7 @@ void CheckSmallIntervalsOnce(PrtList& prt, const double& p,  const int& d){
   it1_prt = it2_prt = prt.begin();
   ++it2_prt;
   
-  for (it2_prt; it2_prt != prt.end(); it2_prt++){
+  for ( ; it2_prt != prt.end(); it2_prt++){
     ++dcount; 
     csum += (*it2_prt).pvdiff ;  
     if(dcount==d){
@@ -205,12 +205,12 @@ void CheckSmallIntervals(PrtList& prt, const double& p,  const int& dn){
   int CurSize = prt.size();
   int d = 3;
   
-  while(LastSize!=CurSize & CurSize>3 & d<=dn){
+  while((LastSize!=CurSize) & (CurSize>3) & (d<=dn)){
     d = 3;
     LastSize = CurSize;
     CheckSmallIntervalsOnce(prt, p, d);
     CurSize = prt.size();
-    while(LastSize==CurSize & CurSize>d+2 & d<dn){
+    while((LastSize==CurSize) & (CurSize>d+2) & (d<dn)){
       d = d + 2;
       LastSize = CurSize;
       CheckSmallIntervalsOnce(prt, p, d);
@@ -233,7 +233,7 @@ void Merge2GoodInt(PrtList& prt,  const double& p, it_PrtList a, it_PrtList v, i
  
   if (a==v or v==b) return ; // nothing to calculate, exit the procedure.
 
-  double val, amin, amax, bmin, bmax, ev, balance, maxbalance, pvadd, jfoin;
+  double amin, amax, bmin, bmax, ev, balance, maxbalance, pvadd, jfoin, takefjoin;
   it_PrtList prt_it, prt_ait, prt_bit;
   std::list<pvtemppoint> av, vb; 
   std::list<pvtemppoint>::iterator ait, bit, tit, bitstart;
@@ -291,12 +291,12 @@ void Merge2GoodInt(PrtList& prt,  const double& p, it_PrtList a, it_PrtList v, i
 
   // 2. ### Sequentially check all possible joints
   pvadd = 0;
+  takefjoin = 0;
   bitstart=vb.begin();
   for(ait=av.begin(); ait!=av.end(); ait++){
     // finding the best j \in (v,b] that point from [a, v) could be joined 
     pvadd += (*ait).ev;
     maxbalance = 0;
-    double takefjoin;
     for(bit=bitstart; bit!=vb.end(); bit++){
       // std::cout <<  (*(*ait).it).id << " - " << (*(*bit).it).id << ":\n";
       jfoin = pvar_diff( (*(*ait).it).val - (*(*bit).it).val, p );
@@ -352,7 +352,7 @@ void PvarByMerging(PrtList& prt,  const double& p, PrtList::iterator a, PrtList:
     ++v_IL; 
     ++b_IL; 
     ++b_IL; 
-    while(b_IL!=IterList.end() & v_IL!=IterList.end() ){
+    while((b_IL!=IterList.end()) & (v_IL!=IterList.end())){
       Merge2GoodInt(prt, p, *a_IL, *v_IL, *b_IL);
       a_IL = IterList.erase(v_IL); 
       v_IL = b_IL = a_IL;
@@ -370,10 +370,14 @@ void PvarByMerging(PrtList& prt,  const double& p, PrtList::iterator a, PrtList:
 // ######################################################################################### //
 
 
-//' Find change poins in data vector
+//' Change Points of a \code{numeric} vector
 //'
-//' @param x numeric vector
-//' @return numeric vector of ids
+//' Finds changes points in the \code{numeric} vector.
+//'
+//' The end points of the vector will be always included in the results. 
+//'
+//' @return The vector of index of change points.
+//' @param x \code{numeric} vector.
 //' @export
 //[[Rcpp::export("ChangePoints")]]
 IntegerVector ChangePoints_fromR(const NumericVector& x){
@@ -409,12 +413,16 @@ IntegerVector ChangePoints_fromR(const NumericVector& x){
   return(out);  
 }
 
-//' Find p-variation
+//' p-variation calculation (in C++)
 //' 
-//' @param x numeric vector
-//' @param p numeric vector
-//' @param LSI numeric vector
-//' @return list...
+//' An internal function(written in C++) that calculates p-variation. 
+//' 
+//' This is a woking horse of this packages, nontheless, ussers should 
+//' not call this sunction directly (rathfer use \code{\link{pvar}}).
+//' 
+//' @return An object of the class \code{pvar}.
+//' @keywords internal
+//' @inheritParams  pvar
 //' @export
 //[[Rcpp::export("pvarC")]]
 List pvarC(const NumericVector& x, double& p, int LSI=3){
@@ -488,12 +496,16 @@ List pvarC(const NumericVector& x, double& p, int LSI=3){
 
 }
 
-//' Add pvars
+//' Addition of p-variation (in C++)
 //' 
-//' @param PV1 numeric vector
-//' @param PV2 numeric vector
-//' @param AddIfPossible numeric vector
-//' @return list...
+//' An internal function(written in C++) that merges two objects of pvar and efectivly recalculates the p-variation of joined sample.
+//' 
+//' This is an internal function, therfore, ussers should 
+//' not call this sunction directly (rathfer use \code{\link{AddPvar}}).
+//' 
+//' @return An object of the class \code{pvar}.
+//' @keywords internal
+//' @inheritParams  AddPvar
 //' @export
 //[[Rcpp::export("AddPvarC")]]
 List AddPvar(List PV1, List PV2, bool AddIfPossible=true){
@@ -584,7 +596,7 @@ List AddPvar(List PV1, List PV2, bool AddIfPossible=true){
       }
     }
     // checking last point (it always significans, so if pvdiff=0 then the one bifore last is insignificant)
-    if(prt1.size()>2 & (*it_prt).pvdiff==0){  
+    if((prt1.size()>2) & ((*it_prt).pvdiff==0)){  
       --it_prt;
       it_prt = prt1.erase(it_prt);
     }
@@ -648,7 +660,7 @@ List test_prepare_prt(const NumericVector& x, const double& p){
   NumericVector val(n);
   NumericVector pvdiff(n);
   
-  for (prt_it; prt_it != prt.end(); prt_it++){    
+  for ( ; prt_it != prt.end(); prt_it++){    
     id[i] = (*prt_it).id+1;
     val[i] = (*prt_it).val;
     pvdiff[i] = (*prt_it).pvdiff;

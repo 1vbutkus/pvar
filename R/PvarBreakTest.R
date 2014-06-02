@@ -1,32 +1,45 @@
 
-### bridge transformation
-BridgeT <- function(x, normalise = TRUE) {
-  if (normalise) {
-    (cumsum(x) - seq_along(x)/length(x) * sum(x))/sqrt(length(x) * var(x))
-  } else {
-    (cumsum(x) - seq_along(x)/length(x) * sum(x))
-  }
-}
-
-### get break points form PvarBreakTest
-BreakPoints <- function(object) object$BreakPoints
-
-### get the mean of p-variation acording of BridgeT(x), then H0 is TRUE (according to n).
-getMean <- function(n, bMean = MeanCoef) {
-  unname(bMean[1] + bMean[2] * n^bMean[3])
-}
-
-### get the standart deviation of p-variation acording of BridgeT(x), then H0 is TRUE (according to n).
-getSd <- function(n, bSd = SdCoef) {
-  unname(bSd[1] + bSd[2] * n^bSd[3])
-}
-
-### Normalyse p-variation acording n.
-NormalisePvar <- function(x, n, bMean = MeanCoef, bSd = SdCoef) {
-  (x - getMean(n, bMean))/getSd(n, bSd)
-}
-
-### the test of structial breaks by p-variation.
+#' Structural break test
+#' 
+#' This function performs structural break test based on p-variation. 
+#' 
+#' Lets \code{x} be a data that should be tested of structial breaks. 
+#' Then the p-variation of the \code{BridgeT(x)} with \code{p=4} is the test's statistics.
+#' 
+#' The quantiles of H0 distribution is based on Monte-Carlo simulation of 140 millions iterations. 
+#' The test is reliable then \code{length(x)} is between 100 and 10000.
+#' The test might work with other lengths too, but it is not tested well.
+#' The test will not compute then \code{length(x)<20}.
+#' 
+#' @return
+#' If \code{FullInfo=TRUE} then function returns an object of the class \code{PvarBreakTest}. 
+#' It is the \code{list} that contains:
+#'   \item{Stat}{a value of statistics (p-variation of transformed data).}
+#' \item{CriticalValue}{the critical value of the test according to significant level.} 
+#' \item{alpha}{the significant level.} 
+#' \item{p.value}{approximate p-value.} 
+#' \item{reject}{\code{logical}. If \code{TRUE}, the H0 was rejected.} 
+#' \item{dname}{the name of data vector.} 
+#' \item{p}{the power in p-variation calculus. The test performs only with the \code{p=4}.} 
+#' \item{x}{a vector of original data.}
+#' \item{y}{a vector of transformed data (\code{y=BridgeT(x)}).}
+#' \item{Timelabel}{time label of \code{x}. Used only for ploting.}
+#' \item{BreakPoints}{the indexes of break points suggestion.}
+#' \item{Partition}{a vector of indexes that indicates the partition of \code{y} that achieves the p-variation maximum.}
+#' @author Vygantas Butkus <Vygantas.Butkus@@gmail.com>
+#' @references R. Norvaisa, A. Rackauskas. Convergence in law of partial sum processes in p-variation norm. 
+#' Lth. Math. J., 2008., Vol. 48, No. 2, 212-227.
+#' 
+#' @seealso Tests statistics is  \code{\link{pvar}} of the data \code{BridgeT(x)}(see  \code{\link{BridgeT}}) with (p=4).
+#' The critical value and the approximate  p-value of the test might by found by functions
+#' \code{\link{PvarQuantile}} and  \code{\link{PvarPvalue}}.  
+#' 
+#' @param x a numeric vector of data values or an object of class \code{pvar}.
+#' @param TimeLabel numeric, a time index of \code{x}. Used only for plotting.
+#' @param alpha a small number greater then 0. It indicates the significant level of the test.
+#' @param FullInfo \code{logical}. If \code{TRUE} (the default) the function will return an object of the class \code{PvarBreakTest} 
+#' that saves all useful information.	Otherwise only the statistics will by returned.
+#' @export
 PvarBreakTest <- function(x, TimeLabel = as.vector(time(x)), alpha = 0.05, FullInfo = TRUE) {
   
   dname <- deparse(substitute(x))
@@ -77,29 +90,20 @@ PvarBreakTest <- function(x, TimeLabel = as.vector(time(x)), alpha = 0.05, FullI
   }
 }
 
-### get critical values accorging to n and prob.
-PvarQuantile <- function(n, prob = c(0.9, 0.95, 0.99), DF = PvarQuantileDF) {
-  intervals <- cut(prob, breaks = DF$prob, include.lowest = TRUE, right = TRUE)
-  Quant <- DF$Quant[as.numeric(intervals) + 1]
-  if (any(is.na(Quant))) 
-    warning("`prob` must be between 0 and 1")
-  ans <- Quant * getSd(n) + getMean(n)
-  unname(ans)
-}
 
-### gets approcimate p-value, of the test.
-PvarPvalue <- function(n, stat, DF = PvarQuantileDF) {
-  NormStat <- NormalisePvar(stat, n)
-  intervals <- cut(NormStat, breaks = c(-Inf, DF$Quant, Inf), include.lowest = TRUE, right = FALSE)
-  ind <- as.numeric(intervals) - 1
-  ind[ind == 0] <- 1
-  1 - DF$prob[ind]
-}
-
-
-######### PvarBreakTest S3 methods #########
-
-
+#' @rdname PvarBreakTest
+#' @param main1 the \code{main} parameter of the data graph.
+#' @param main2 the \code{main} parameter of the Bridge transformation graph.
+#' @param ylab1 the \code{ylab} parameter of the data graph.
+#' @param ylab2 the \code{ylab} parameter of the Bridge transformation graph.
+#' @param sub2 the \code{sub} parameter of the Bridge transformation graph. By default it reports the number of break points.
+#' @param cex.DP the cex of data points.
+#' @param col.PP the color of partition points.
+#' @param cex.PP the cex of partition points.
+#' @param col.BP the color of break points.
+#' @param cex.BP the cex of break points.
+#' @param \dots further arguments, pased to \code{print}. 
+#' @export
 plot.PvarBreakTest <- function(x, main1 = "Data", main2 = "Bridge transformation", ylab1 = x$dname, ylab2 = "BridgeT(" %.% x$dname %.% 
   ")", sub2 = NULL, col.PP = 3, cex.PP = 0.5, col.BP = 2, cex.BP = 1, cex.DP = 0.5, ...) {
   Time <- x$TimeLabel
@@ -131,6 +135,15 @@ plot.PvarBreakTest <- function(x, main1 = "Data", main2 = "Bridge transformation
   par(op)
 }
 
+#' @rdname PvarBreakTest
+#' @param object the object of the class \code{PvarBreakTest}.
+#' @export
+summary.PvarBreakTest <- function(object, ...) {
+  class(object) <- c("summary.PvarBreakTest", "PvarBreakTest")
+  object
+}
+
+#' @method print print.PvarBreakTest
 print.PvarBreakTest <- function(x, ...) {
   cat("       PvarBreakTest \n\n")
   cat("H0: no structural change \n")
@@ -145,11 +158,7 @@ print.PvarBreakTest <- function(x, ...) {
   print(c(x$Stat, x$CriticalValue, x$alpha, x$p.value))
 }
 
-summary.PvarBreakTest <- function(object, ...) {
-  class(object) <- c("summary.PvarBreakTest", "PvarBreakTest")
-  object
-}
-
+#' @method print summary.PvarBreakTest
 print.summary.PvarBreakTest <- function(x, ...) {
   cat("The summary of PvarBreakTest:\n")
   cat("H0: no structural change. \n")
@@ -184,3 +193,120 @@ print.summary.PvarBreakTest <- function(x, ...) {
     cat("\nData vector (n=" %.% length(x$x) %.% "): " %.% paste(formatC(head(x$x, 6)), collapse = ", ") %.% ".\n")
   }
 } 
+
+############################################################################################################
+############################################################################################################
+############################################################################################################
+
+#' Bridge transformation
+#' 
+#' Transforms data by Bridge trasnformation.
+#' 
+#' Let \code{n} denotes the length ox \code{x}.
+#' For  each \eqn{m \in [1,n]} bridge transformations \code{BridgeT}
+#' is difined as  
+#' 
+#' \deqn{
+#'   BridgeT(m, x) = \left\{ \sum_{i=1}^m x_i - \frac{m}{n} \sum_{i=1}^n x_i  \right\} .
+#' }{
+#'   BridgeT(m, x) = ( \sum^m x_i - m/n \sum^n x_i ).
+#' }
+#' 
+#' Meanwhile, the transformation with normalisation is 
+#' 
+#' \deqn{
+#'   BridgeT(m, x) = \frac{1}{\sqrt{n var(x)}} \left\{ \sum_{i=1}^m x_i - \frac{m}{n} \sum_{i=1}^n x_i  \right\} .
+#' }{
+#'   BridgeT(m, x) = ( \sum^m x_i - m/n \sum^n x_i  ) / (n var(x))^0.5.
+#' }
+#' @return A numeric vector.
+#' @seealso \code{\link{PvarBreakTest}},  \code{\link{rbridge}}
+#' 
+#' @param x x a numeric vector of data values.
+#' @param normalise \code{logical}, indicating whether the vector should be normalised. 
+#' @export
+BridgeT <- function(x, normalise = TRUE) {
+  if (normalise) {
+    (cumsum(x) - seq_along(x)/length(x) * sum(x))/sqrt(length(x) * var(x))
+  } else {
+    (cumsum(x) - seq_along(x)/length(x) * sum(x))
+  }
+}
+################################################################################################################
+
+#' Quantiles and probabilities of p-variation
+#' 
+#' The distribution of p-variation of \code{BridgeT(x)} depends on \code{n=length(x)}. 
+#' This fact is important for getting appropriate quantiles (or p-value).
+#' These functions helps to deal with it. 
+#' 
+#' The distribution of p-variance is form Monte-Carlo simulation based on 140 millions iterations. 
+#' The data frame \code{\link{PvarQuantileDF}} saves the results of Monte-Carlo simulation.
+#' 
+#' Meanwhile, \code{MeanCoef} and \code{SdCoef} defines the coefficients of functional 
+#' form (according to \code{n}) of \code{mean} and \code{sd} statistics.
+#' 
+#' A functianal form of \code{mean} and \code{sd} statistics are the same, namely
+#' \deqn{
+#'   f(n) = b_1 + b_2 n^b_2 .
+#' }{
+#'   f(n) = b_1 + b_2 * n^b_2 .
+#' }
+#' 
+#' And the coeficients \eqn{(b_1, b_2, b_3)} are saved in vectors \code{MeanCoef} and \code{SdCoef}.
+#' Those vectors are estimated with \code{nls} function form Monte-Carlo simulation.
+#' @rdname StatisticsPvarBreakTest
+#' @return Functions \code{PvarQuantile} and \code{PvarPvalue} returns a corresponding value quantile or the probability.
+#' Functions \code{getMean} and \code{getSd} returns a corresponding value of \code{mean} and \code{sd} statistics.
+#' Function \code{NormalisePvar} returns normalise values#' 
+#' @note  Arguments \code{n}, \code{stat} and \code{prob} might be vectors,
+#' but they can't be vectors simultaneously (at least one of then must be a number).
+#' @seealso  \code{\link{PvarBreakTest}}, \code{\link{PvarQuantileDF}},  \code{\link{NormalisePvar}},  \code{\link{getMean}}, \code{\link{getSd}}
+#' 
+#' @param n a positive integer indicating the length of data vector.
+#' @param prob cumulative probabilities of p-variation distribution.
+#' @param DF cumulative probabilities of p-variation distribution.
+#' @export
+PvarQuantile <- function(n, prob = c(0.9, 0.95, 0.99), DF = PvarQuantileDF) {
+  intervals <- cut(prob, breaks = DF$prob, include.lowest = TRUE, right = TRUE)
+  Quant <- DF$Quant[as.numeric(intervals) + 1]
+  if (any(is.na(Quant))) 
+    warning("`prob` must be between 0 and 1")
+  ans <- Quant * getSd(n) + getMean(n)
+  unname(ans)
+}
+
+#' @rdname StatisticsPvarBreakTest 
+#' @param stat a vector of p-variation statistics.
+#' @export
+PvarPvalue <- function(n, stat, DF = PvarQuantileDF) {
+  NormStat <- NormalisePvar(stat, n)
+  intervals <- cut(NormStat, breaks = c(-Inf, DF$Quant, Inf), include.lowest = TRUE, right = FALSE)
+  ind <- as.numeric(intervals) - 1
+  ind[ind == 0] <- 1
+  1 - DF$prob[ind]
+}
+
+#' @rdname StatisticsPvarBreakTest 
+#' @param bMean a coefficient vector that defines a function of the mean of p-variation.
+#' @export
+### get the mean of p-variation acording of BridgeT(x), then H0 is TRUE (according to n).
+getMean <- function(n, bMean = MeanCoef) {
+  unname(bMean[1] + bMean[2] * n^bMean[3])
+}
+
+#' @rdname StatisticsPvarBreakTest 
+#' @param bSd a coefficient vector that defines a function of the standard deviation of p-variation.
+#' @export
+### get the standart deviation of p-variation acording of BridgeT(x), then H0 is TRUE (according to n).
+getSd <- function(n, bSd = SdCoef) {
+  unname(bSd[1] + bSd[2] * n^bSd[3])
+}
+
+#' @rdname StatisticsPvarBreakTest 
+#' @param x a numeric vector of data values.
+#' @export
+### Normalyse p-variation acording n.
+NormalisePvar <- function(x, n, bMean = MeanCoef, bSd = SdCoef) {
+  (x - getMean(n, bMean))/getSd(n, bSd)
+}

@@ -1,3 +1,5 @@
+# The functions that are not used directly in package, but rather for testing C code.
+
 
 ChangePointsId_R <- function(x) {
   len <- length(x)
@@ -36,8 +38,6 @@ CheckSmallIntervalsB <- function(x, p, dn) {
   }
   return(KeepB)
 }
-
-# plot(x, type='l') points(time(x)[KeepB], x[KeepB], pch=19, col=2)
 
 CheckSmallIntervals_R <- function(x, p, d) {
   id <- ChangePointsId_R(x)

@@ -1,20 +1,31 @@
 \name{AddPvarC}
 \alias{AddPvarC}
-\title{Add pvars}
+\title{Addition of p-variation (in C++)}
 \usage{
 AddPvarC(PV1, PV2, AddIfPossible = TRUE)
 }
 \arguments{
-  \item{PV1}{numeric vector}
+  \item{PV1}{an object of the class \code{pvar}.}
 
-  \item{PV2}{numeric vector}
+  \item{PV2}{an object of the class \code{pvar}, which has
+  the same \code{p} value as PV1 object.}
 
-  \item{AddIfPossible}{numeric vector}
+  \item{AddIfPossible}{\code{logical}. If TRUE (the
+  default), then is is assumed, that two samples has common
+  point.}
 }
 \value{
-list...
+An object of the class \code{pvar}.
 }
 \description{
-Add pvars
+An internal function(written in C++) that merges two
+objects of pvar and efectivly recalculates the p-variation
+of joined sample.
 }
+\details{
+This is an internal function, therfore, ussers should not
+call this sunction directly (rathfer use
+\code{\link{AddPvar}}).
+}
+\keyword{internal}
 

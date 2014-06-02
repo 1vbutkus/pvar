@@ -1,24 +1,90 @@
 \name{pvar}
-\alias{print.pvar}
+\alias{plot.pvar}
 \alias{pvar}
-\title{pvar}
+\alias{summary.pvar}
+\title{p-variation calculation}
 \usage{
 pvar(x, p, TimeLabel = as.vector(time(x)), LSI = 3)
 
-\method{print}{pvar}(x, ...)
+\method{summary}{pvar}(object, ...)
+
+\method{plot}{pvar}(x, main = "p-variation", ylab = x$dname, sub = "p="
+  \%.\% round(x$p, 5) \%.\% ", p-variation: " \%.\% formatC(x$value, 5, format =
+  "f"), col.PP = 2, cex.PP = 0.5, ...)
 }
 \arguments{
-  \item{x}{asd}
+  \item{x}{a (non-empty) numeric vector of data values or
+  an object of the class \code{pvar}.}
 
-  \item{p}{asd}
+  \item{p}{a positive number indicating the power p in
+  p-variation.}
 
-  \item{TimeLabel}{asd}
+  \item{TimeLabel}{numeric, a time index of \code{x}. Used
+  only for plotting.}
 
-  \item{LSI}{asd}
+  \item{LSI}{a length of small interval. It must be a
+  positive odd number. This parameter do not have effect on
+  final rezult, but maigth influence the speed of
+  calculation.}
 
-  \item{\dots}{asd}
+  \item{object}{an objct of the class \code{pvar}.}
+
+  \item{\dots}{further arguments.}
+
+  \item{main}{a \code{main} parameter in \code{plot}
+  function.}
+
+  \item{ylab}{a \code{ylab} parameter in \code{plot}
+  function.}
+
+  \item{sub}{a \code{sub} parameter in \code{plot}
+  function.}
+
+  \item{col.PP}{the color of partition points.}
+
+  \item{cex.PP}{the cex of partition points.}
+}
+\value{
+An object of the class \code{pvar}. Namely, it is a list
+that contains \item{value}{a value of p-variation.}
+\item{x}{a vector of original data \code{x}.} \item{p}{the
+value of p.} \item{partition}{a vector of indexes that
+indicates the partition that achieves the maximum.}
+\item{dname}{a name of data vector (optional).}
+\item{TimeLabel}{a time label of \code{x} (optional).}
 }
 \description{
-pvar
+Calculates p-variation of the sample.
+}
+\details{
+See (in pvar-package)...
+}
+\examples{
+### randomised data:
+x = rbridge(1000)
+
+### the main functions:
+pv = pvar(x, 2)
+print(pv)
+summary(pv)
+plot(pv)
+
+### The value of p-variation is
+pv; Sum_p(x[pv$partition], 2)
+
+### The meaning of partition points:
+pv.PP = pvar(x[pv$partition], TimeLabel=time(x)[pv$partition], 2)
+pv.PP == pv.PP
+op <- par(mfrow = c(2, 1))
+plot(pv, main="pvar with original data")
+plot(pv.PP, main="the same pvar without meaningless points")
+par(op)
+}
+\author{
+Vygantas Butkus <Vygantas.Butkus@gmail.com>
+}
+\seealso{
+One of the p-variations application is realized in
+\code{\link{PvarBreakTest}} function.
 }
 

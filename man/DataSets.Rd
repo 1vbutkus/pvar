@@ -4,10 +4,12 @@
 \alias{MeanCoef}
 \alias{PvarQuantileDF}
 \alias{SdCoef}
-\title{CpG islands - human - genome build: GRCh37/hg19}
-\format{a \code{RangedData} instance, 1 row per CpG island.}
+\title{Data sets of Monte-Carlo simulations results}
+\format{the \code{PvarQuantileDF} is a \code{data.frame} with fields \code{prob} an {Qaunt}.
+The field \code{brob} represent the probability and \code{Quant} gives coresponging quantile.
+\code{MeanCoef} and \code{SdCoef} is a named vector used in functions \code{\link{getMean}} and \code{\link{getSd}}.}
 \source{
-UCSC Table Browser
+Monte-Carlo simulation
 }
 \usage{
 PvarQuantileDF
@@ -15,11 +17,21 @@ MeanCoef
 SdCoef
 }
 \description{
-This data set list the genomic locations of human CpG
-islands, with coordinates based on the GRCh37 / hg19 genome
-build.
+The test \code{\link{PvarBreakTest}} uses quantiles from
+Monte-Carlo simulations. The results of the simulations are
+saved in these data sets.
+}
+\details{
+The distribution of p-variation of \code{BridgeT(x)} are
+unknown. The distribution of p-variance is approximated
+form Monte-Carlo simulation based on 141 millions
+iterations. The data frame \code{PvarQuantile} summarise
+the distribution of normalised statistics. Meanwhile,
+\code{MeanCoef} and \code{SdCoef} defines the coefficients
+of functional form of \code{mean} and \code{sd} statistics
+of PvarBreakTest statistics.
 }
 \author{
-Mark Cowley, 2012-03-05
+Vygantas Butkus <Vygantas.Butkus@gmail.com>
 }
 
