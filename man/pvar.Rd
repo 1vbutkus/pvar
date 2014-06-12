@@ -76,8 +76,8 @@ pv; Sum_p(x[pv$partition], 2)
 pv.PP = pvar(x[pv$partition], TimeLabel=time(x)[pv$partition], 2)
 pv.PP == pv.PP
 op <- par(mfrow = c(2, 1))
-plot(pv, main="pvar with original data")
-plot(pv.PP, main="the same pvar without meaningless points")
+plot(pv, main='pvar with original data')
+plot(pv.PP, main='the same pvar without meaningless points')
 par(op)
 }
 \author{

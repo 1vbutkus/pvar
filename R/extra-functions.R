@@ -11,17 +11,17 @@
 #' @param y asd 
 #' @export
 #' @examples
-#' paste("I ", "love ", "R.", sep="")
-#' "I " \%.\% "love " \%.\% "R."
+#' paste('I ', 'love ', 'R.', sep='')
+#' 'I ' %.% 'love ' %.% 'R.'
 #'
 #' x = c(2,1,6,7,9)
-#' paste("The length of vector (", paste(x , sep="", collapse =","), ") is ", length(x) , sep="")
-#' "The length of vector (" \%.\% paste(x , sep="", collapse =",") \%.\% ") is " \%.\% length(x)
+#' paste('The length of vector (', paste(x , sep='', collapse =','), ') is ', length(x) , sep='')
+#' 'The length of vector (' %.% paste(x , sep='', collapse =',') %.% ') is ' %.% length(x)
 `%.%` <- function(x, y) paste(x, y, sep = "")
 
 
 
-######### Generating functions ######### 
+######### Generating functions #########
 
 #' Random process generators
 #' 
@@ -41,22 +41,22 @@
 #' @param end a number. The end point of the process in the 'time' scale.
 #' @export
 rwiener <- function(frequency = 1000, end = 1) {
-  z <- c(0, cumsum(rnorm(end * frequency)/sqrt(frequency)))
-  ts(z, start = 0, end = 1, frequency = frequency)
+    z <- c(0, cumsum(rnorm(end * frequency)/sqrt(frequency)))
+    ts(z, start = 0, end = 1, frequency = frequency)
 }
 
 
 #' @rdname ProcessGenerators
 #' @export
 rbridge <- function(frequency = 1000, end = 1) {
-  z <- rwiener(frequency = frequency, end = end)
-  ts(z - time(z) * as.vector(z)[frequency], start = 0, frequency = frequency)
+    z <- rwiener(frequency = frequency, end = end)
+    ts(z - time(z) * as.vector(z)[frequency], start = 0, frequency = frequency)
 }
 
 #' @rdname ProcessGenerators
 #' @export
 rcumbin <- function(frequency = 1000, end = 1) {
-  z <- c(0, cumsum(sample(c(-1, 0, 1), frequency, replace=TRUE)))
-  ts(z, start = 0, end = 1, frequency = frequency)
-} 
-
+    z <- c(0, cumsum(sample(c(-1, 0, 1), frequency, replace = TRUE)))
+    ts(z, start = 0, end = 1, frequency = frequency)
+}
+ 
