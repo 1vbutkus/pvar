@@ -1,5 +1,7 @@
-// ...
-
+// p-variation calculus for piecewise monotone functions
+// The main function is `pvarC`.
+// Autor and maintainer: Vygantas Butkus <Vygantas.Butkus@gmail.com>
+// Please do not hesitate to contact me
 
 
 #include <numeric>     
@@ -13,7 +15,7 @@ using namespace Rcpp;
 // ############################### inner(C++) functions #################################### //
 // ######################################################################################### //
 
-// -------------------------------- types definitions -------------------------------------- // 
+// -------------------------------- definitions if types  ---------------------------------- // 
 
 // p-variation point. An object with necessary info.
 struct pvpoint {
@@ -72,7 +74,7 @@ struct pvtemppoint{
 
 // ---------------------------- calculation functions ----------------------------- // 
 
-// last iterator of the list. It is iterator to obj.back(i.e. obj.end()-1)
+// last iterator of the list. It is iterator to `obj.end()-1`
 template <class T>
 typename T::iterator last(T& obj){
   typename T::iterator it = obj.end();
@@ -81,7 +83,7 @@ typename T::iterator last(T& obj){
 }
 
 
-// the difference used in p-variation: the abs power of diff.
+// the difference used in p-variation, i.e. the abs power of diff.
 double pvar_diff(double diff, double p){  
   return std::pow(std::abs(diff), p);
 }
@@ -233,17 +235,17 @@ void Merge2GoodInt(PrtList& prt,  const double& p, it_PrtList a, it_PrtList v, i
  
   if (a==v or v==b) return ; // nothing to calculate, exit the procedure.
 
-  double amin, amax, bmin, bmax, ev, balance, maxbalance, pvadd, jfoin, takefjoin;
+  double amin, amax, bmin, bmax, ev, balance, maxbalance, jfoin, takefjoin;
   it_PrtList prt_it, prt_ait, prt_bit;
   std::list<pvtemppoint> av, vb; 
-  std::list<pvtemppoint>::iterator ait, bit, tit, bitstart;
+  std::list<pvtemppoint>::iterator ait, bit, tit, tait, tbit, bitstart;
   pvtemppoint pvtp;
   
 
   // 1. ### Find potential points 
 
   // --- in interval [a,v) (starting from v).  
-  ev=0;
+  ev = 0;
   prt_it = v;
   amin = amax= (*v).val;
   while(prt_it!=a){
@@ -254,20 +256,18 @@ void Merge2GoodInt(PrtList& prt,  const double& p, it_PrtList a, it_PrtList v, i
       pvtp.it = prt_it;
       pvtp.ev = ev;
       av.push_back (pvtp);
-      ev=0;                 // in [a, v) `ev` means p variation between nearest potential point.
     }
     if((*prt_it).val<amin){
       amin=(*prt_it).val;
       pvtp.it = prt_it;
       pvtp.ev = ev;
       av.push_back (pvtp);
-      ev=0;
     }
   }
   // printList(av, "av :");
   
   // --- in interval (v,b] (starting from v). 
-  ev = 0;                  // in (v, b] `ev` means p variation between v and points
+  ev = 0;                 
   prt_it = v;
   bmin = bmax = (*v).val;
   while(prt_it!=b){
@@ -289,36 +289,31 @@ void Merge2GoodInt(PrtList& prt,  const double& p, it_PrtList a, it_PrtList v, i
   // printList(vb, "vb :");
 
 
-  // 2. ### Sequentially check all possible joints
-  pvadd = 0;
+  // 2. ### Sequentially check all possible joints: finding the best i,j \in [a, v)x(v,b] that could be joined
   takefjoin = 0;
-  bitstart=vb.begin();
+  maxbalance = 0;
   for(ait=av.begin(); ait!=av.end(); ait++){
-    // finding the best j \in (v,b] that point from [a, v) could be joined 
-    pvadd += (*ait).ev;
-    maxbalance = 0;
-    for(bit=bitstart; bit!=vb.end(); bit++){
+    for(bit=vb.begin(); bit!=vb.end(); bit++){
       // std::cout <<  (*(*ait).it).id << " - " << (*(*bit).it).id << ":\n";
       jfoin = pvar_diff( (*(*ait).it).val - (*(*bit).it).val, p );
-      balance = jfoin - (*bit).ev - pvadd ;
+      balance = jfoin - (*bit).ev - (*ait).ev ;
       if (balance>maxbalance){
         maxbalance = balance;
         takefjoin = jfoin;
-        tit = bit;
+        tait = ait;
+        tbit = bit;
       }
-    }    
-    // if we found any point, join it by erasing all middle points
-    if(maxbalance>0){
-      // joining:
-      pvadd += maxbalance;
-      bit = tit;      
-      bitstart = bit;
-      prt_ait = (*ait).it;
-      ++prt_ait;
-      prt_it = prt.erase(prt_ait, (*bit).it);     
-      (*prt_it).pvdiff = takefjoin;
-    }   
+    } 
   }  
+       
+  // if we found any point, join it by erasing all middle points
+  if(maxbalance>0){
+    // joining:
+    prt_ait = (*tait).it;
+    ++prt_ait;
+    prt_it = prt.erase(prt_ait, (*tbit).it);     
+    (*prt_it).pvdiff = takefjoin;
+  }   
 }
 
 // Modifies prt to become the partition of p-variation by merging all small in [a, b]
