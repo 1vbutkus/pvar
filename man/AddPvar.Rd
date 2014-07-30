@@ -18,7 +18,7 @@ AddPvar(PV1, PV2, AddIfPossible = TRUE)
 An object of the class \code{pvar}. See \code{\link{pvar}}.
 }
 \description{
-Merges two objects of p-variation and efectivly
+Merges two objects of p-variation and effectively
 recalculates the p-variation of joined sample.
 }
 \details{

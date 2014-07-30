@@ -1,7 +1,7 @@
 // p-variation calculus for piecewise monotone functions
 // The main function is `pvarC`.
-// Autor and maintainer: Vygantas Butkus <Vygantas.Butkus@gmail.com>
-// Please do not hesitate to contact me
+// Author and maintainer: Vygantas Butkus <Vygantas.Butkus@gmail.com>
+// Please do not hesitate to contact me in any question.
 
 
 #include <numeric>     
@@ -15,7 +15,7 @@ using namespace Rcpp;
 // ############################### inner(C++) functions #################################### //
 // ######################################################################################### //
 
-// -------------------------------- definitions if types  ---------------------------------- // 
+// -------------------------------- definitions of types  ---------------------------------- // 
 
 // p-variation point. An object with necessary info.
 struct pvpoint {
@@ -100,7 +100,7 @@ PrtList ChangePoints(const NumericVector& x){
   
   pvpoint pvp;
   pvp.id = 0;
-  PrtList out (1, pvp); // the first and last points are allways included by definition.
+  PrtList out (1, pvp); // the first and last points are always included by definition.
 
   for(int i = 1; i < n; ++i) {
     if(x[i-1]<x[i]){
@@ -120,7 +120,7 @@ PrtList ChangePoints(const NumericVector& x){
   }  
   
   pvp.id =n-1;
-  out.push_back (pvp); // the first and last points are allways included by definition.
+  out.push_back (pvp); // the first and last points are always included by definition.
 
   return(out);
 }
@@ -194,12 +194,12 @@ void CheckSmallIntervalsOnce(PrtList& prt, const double& p,  const int& d){
 }
 
 // checks small intervals of up till length dn. 
-// After this function, all points are significant in any small interval (i.e. intervale with length no greater dn).
+// After this function, all points are significant in any small interval (i.e. interval with length no greater dn).
 void CheckSmallIntervals(PrtList& prt, const double& p,  const int& dn){
 
   // Main principle:
   // apply CheckSmallIntervalsOnce starting form d=3 (because 3 is the minimal length worth checking)
-  // If there was no change, apply CheckSmallIntervalsOnce with d=d+2 (because insignificant poins goes only in pears) 
+  // If there was no change, apply CheckSmallIntervalsOnce with d=d+2 (because insignificant points goes only in pears) 
   // If there was change start from d=3 again (because `prt` changed, therefore, we are not sure if all smaller intervals are good).
 
 
@@ -412,8 +412,8 @@ IntegerVector ChangePoints_fromR(const NumericVector& x){
 //' 
 //' An internal function(written in C++) that calculates p-variation. 
 //' 
-//' This is a woking horse of this packages, nontheless, ussers should 
-//' not call this sunction directly (rathfer use \code{\link{pvar}}).
+//' This is a waking horse of this packages, nonetheless, users should 
+//' not call this function directly (rather use \code{\link{pvar}}).
 //' 
 //' @return An object of the class \code{pvar}.
 //' @keywords internal
@@ -493,10 +493,10 @@ List pvarC(const NumericVector& x, double& p, int LSI=3){
 
 //' Addition of p-variation (in C++)
 //' 
-//' An internal function(written in C++) that merges two objects of pvar and efectivly recalculates the p-variation of joined sample.
+//' An internal function(written in C++) that merges two objects of pvar and effectively recalculates the p-variation of joined sample.
 //' 
-//' This is an internal function, therfore, ussers should 
-//' not call this sunction directly (rathfer use \code{\link{AddPvar}}).
+//' This is an internal function, therefore, users should 
+//' not call this function directly (rather use \code{\link{AddPvar}} or \code{pv1 + pv2}).
 //' 
 //' @return An object of the class \code{pvar}.
 //' @keywords internal
@@ -554,7 +554,7 @@ List AddPvar(List PV1, List PV2, bool AddIfPossible=true){
   std::copy (it2, x2.end(), it1);    
   
   // concatenating prt:  
-  v1 = v2 = last(prt1);  //saving joining vertex, bifore merge  
+  v1 = v2 = last(prt1);  //saving joining vertex, before merge  
   int addid = n1;
   if(Add){
     prt2.erase(prt2.begin());
@@ -590,7 +590,7 @@ List AddPvar(List PV1, List PV2, bool AddIfPossible=true){
         it_prt++;
       }
     }
-    // checking last point (it always significans, so if pvdiff=0 then the one bifore last is insignificant)
+    // checking last point (it always significants, so if pvdiff=0 then the one before last is insignificant)
     if((prt1.size()>2) & ((*it_prt).pvdiff==0)){  
       --it_prt;
       it_prt = prt1.erase(it_prt);

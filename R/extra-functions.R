@@ -27,9 +27,11 @@
 #' 
 #' Generate a trajectory of random processes.  
 #' 
-#' \code{rwiener} generate Wiener process via partial sums process. 
+#' \code{rwiener} generate Wiener process via partial sums process and 
 #' \code{rbridge} generate Brownian bridge via \code{rwiener}.
-#' The original code of \code{rwiener} and \code{rbridge} was writen in the package \code{e1071}. 
+#' The original code of \code{rwiener} and \code{rbridge} was written in the package \code{e1071}. 
+#' In this package these functions was modified to
+#' include leading zero in the beginning of the sample. 
 #' 
 #' \code{rcumbin} generate partial sums process from random variables with values \code{-1,  0, 1}.
 #' 
@@ -41,22 +43,21 @@
 #' @param end a number. The end point of the process in the 'time' scale.
 #' @export
 rwiener <- function(frequency = 1000, end = 1) {
-    z <- c(0, cumsum(rnorm(end * frequency)/sqrt(frequency)))
-    ts(z, start = 0, end = 1, frequency = frequency)
+  z <- c(0, cumsum(rnorm(end * frequency)/sqrt(frequency)))
+  ts(z, start = 0, end = 1, frequency = frequency)
 }
 
 
 #' @rdname ProcessGenerators
 #' @export
 rbridge <- function(frequency = 1000, end = 1) {
-    z <- rwiener(frequency = frequency, end = end)
-    ts(z - time(z) * as.vector(z)[frequency], start = 0, frequency = frequency)
+  z <- rwiener(frequency = frequency, end = end)
+  ts(z - time(z) * as.vector(z)[frequency], start = 0, frequency = frequency)
 }
 
 #' @rdname ProcessGenerators
 #' @export
 rcumbin <- function(frequency = 1000, end = 1) {
-    z <- c(0, cumsum(sample(c(-1, 0, 1), frequency, replace = TRUE)))
-    ts(z, start = 0, end = 1, frequency = frequency)
-}
- 
+  z <- c(0, cumsum(sample(c(-1, 0, 1), frequency, replace = TRUE)))
+  ts(z, start = 0, end = 1, frequency = frequency)
+} 
