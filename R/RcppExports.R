@@ -18,8 +18,8 @@ ChangePoints <- function(x) {
 #' 
 #' An internal function(written in C++) that calculates p-variation. 
 #' 
-#' This is a woking horse of this packages, nontheless, ussers should 
-#' not call this sunction directly (rathfer use \code{\link{pvar}}).
+#' This is a waking horse of this packages, nonetheless, users should 
+#' not call this function directly (rather use \code{\link{pvar}}).
 #' 
 #' @return An object of the class \code{pvar}.
 #' @keywords internal
@@ -31,10 +31,10 @@ pvarC <- function(x, p, LSI = 3L) {
 
 #' Addition of p-variation (in C++)
 #' 
-#' An internal function(written in C++) that merges two objects of pvar and efectivly recalculates the p-variation of joined sample.
+#' An internal function(written in C++) that merges two objects of pvar and effectively recalculates the p-variation of joined sample.
 #' 
-#' This is an internal function, therfore, ussers should 
-#' not call this sunction directly (rathfer use \code{\link{AddPvar}}).
+#' This is an internal function, therefore, users should 
+#' not call this function directly (rather use \code{\link{AddPvar}} or \code{pv1 + pv2}).
 #' 
 #' @return An object of the class \code{pvar}.
 #' @keywords internal

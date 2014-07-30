@@ -3,7 +3,7 @@
 #' 
 #' This function performs structural break test based on p-variation. 
 #' 
-#' Lets \code{x} be a data that should be tested of structial breaks. 
+#' Lets \code{x} be a data that should be tested of structural breaks. 
 #' Then the p-variation of the \code{BridgeT(x)} with \code{p=4} is the test's statistics.
 #' 
 #' The quantiles of H0 distribution is based on Monte-Carlo simulation of 140 millions iterations. 
@@ -41,53 +41,54 @@
 #' that saves all useful information. Otherwise only the statistics will by returned.
 #' @export
 PvarBreakTest <- function(x, TimeLabel = as.vector(time(x)), alpha = 0.05, FullInfo = TRUE) {
-    
-    dname <- deparse(substitute(x))
-    NAInd <- is.na(x)
-    if (any(NAInd)) {
-        warning("NA values was removed.")
-        x <- x[!NAInd]
-        TimeLabel <- TimeLabel[!NAInd]
-    }
-    n <- length(x)
-    if (n < 20) 
-        stop("The size must be greater than 20.")
-    if (n < 100) 
-        warning("The test migth by biased when n<100.")
-    CriticalValue <- PvarQuantile(n, prob = 1 - alpha)
-    
-    if (sd(x) == 0) {
-        y <- x
+  
+  dname <- deparse(substitute(x))
+  NAInd <- is.na(x)
+  if (any(NAInd)) {
+    warning("NA values was removed.")
+    x <- x[!NAInd]
+    TimeLabel <- TimeLabel[!NAInd]
+  }
+  n <- length(x)
+  if (n < 20) 
+    stop("The size must be greater than 20.")
+  if (n < 100) 
+    warning("The test might by biased when n<100.")
+  CriticalValue <- PvarQuantile(n, prob = 1 - alpha)
+  
+  if (sd(x) == 0) {
+    y <- x
+  } else {
+    y <- BridgeT(x)
+  }
+  
+  PvarStat <- pvar(y, p = 4, TimeLabel = TimeLabel)
+  if (FullInfo) {
+    Stat <- unname(PvarStat$value)
+    p.value <- PvarPvalue(n, Stat)
+    reject <- Stat >= CriticalValue[1]
+    if (reject) {
+      BreakPos <- abs(PvarStat$partition/n - 0.5)
+      accept <- abs(PvarStat$partition/n - 0.5) < 0.4
+      if (!any(accept)) {
+        accept[which.min[BreakPos]] <- TRUE
+      }
+      BreakPoints <- PvarStat$partition[accept]
     } else {
-        y <- BridgeT(x)
+      BreakPoints <- NULL
     }
+    ans <- list(Stat = c(Statistics = Stat), CriticalValue = c(`Critical Value` = CriticalValue), alpha = c(alpha = alpha), p.value = c(`~p.value` = p.value), 
+      reject = reject, dname = dname, p = unname(PvarStat$p), x = x, y = y, TimeLabel = TimeLabel, BreakPoints = BreakPoints, 
+      Partition = PvarStat$partition)
     
-    PvarStat <- pvar(y, p = 4, TimeLabel = TimeLabel)
-    if (FullInfo) {
-        Stat <- unname(PvarStat$value)
-        p.value <- PvarPvalue(n, Stat)
-        reject <- Stat >= CriticalValue[1]
-        if (reject) {
-            BreakPos <- abs(PvarStat$partition/n - 0.5)
-            accept <- abs(PvarStat$partition/n - 0.5) < 0.4
-            if (!any(accept)) {
-                accept[which.min[BreakPos]] <- TRUE
-            }
-            BreakPoints <- PvarStat$partition[accept]
-        } else {
-            BreakPoints <- NULL
-        }
-        ans <- list(Stat = c(Statistics = Stat), CriticalValue = c(`Critical Value` = CriticalValue), alpha = c(alpha = alpha), p.value = c(`~p.value` = p.value), 
-            reject = reject, dname = dname, p = unname(PvarStat$p), x = x, y = y, TimeLabel = TimeLabel, BreakPoints = BreakPoints, Partition = PvarStat$partition)
-        
-        class(ans) <- "PvarBreakTest"
-        return(ans)
-    } else {
-        Stat <- PvarStat
-        p.value <- PvarPvalue(n, Stat)
-        ans <- c(Statistics = Stat, `Critical Value` = CriticalValue, alpha = alpha, `~p.value` = p.value)
-        return(ans)
-    }
+    class(ans) <- "PvarBreakTest"
+    return(ans)
+  } else {
+    Stat <- PvarStat
+    p.value <- PvarPvalue(n, Stat)
+    ans <- c(Statistics = Stat, `Critical Value` = CriticalValue, alpha = alpha, `~p.value` = p.value)
+    return(ans)
+  }
 }
 
 
@@ -105,104 +106,104 @@ PvarBreakTest <- function(x, TimeLabel = as.vector(time(x)), alpha = 0.05, FullI
 #' @param \dots further arguments, pased to \code{print}. 
 #' @export
 plot.PvarBreakTest <- function(x, main1 = "Data", main2 = "Bridge transformation", ylab1 = x$dname, ylab2 = "BridgeT(" %.% x$dname %.% 
-    ")", sub2 = NULL, col.PP = 3, cex.PP = 0.5, col.BP = 2, cex.BP = 1, cex.DP = 0.5, ...) {
-    Time <- x$TimeLabel
-    op <- par(mfrow = c(2, 1), mar = c(5.1, 4.1, 2.1, 2.1))
-    
-    plot(Time, x$x, type = "p", pch = 19, cex = cex.DP, ylab = ylab1, main = main1, ...)
-    BP <- c(1, x$BreakPoints, length(x$x))
-    for (i in 2:length(BP)) {
-        Eseg <- mean(x$x[BP[i - 1]:BP[i]])
-        colseg <- i%%2 + 2
-        segments(x0 = Time[BP[i - 1]], y0 = Eseg, x1 = Time[BP[i]], y1 = Eseg, lwd = 3, col = colseg)
+  ")", sub2 = NULL, col.PP = 3, cex.PP = 0.5, col.BP = 2, cex.BP = 1, cex.DP = 0.5, ...) {
+  Time <- x$TimeLabel
+  op <- par(mfrow = c(2, 1), mar = c(5.1, 4.1, 2.1, 2.1))
+  
+  plot(Time, x$x, type = "p", pch = 19, cex = cex.DP, ylab = ylab1, main = main1, ...)
+  BP <- c(1, x$BreakPoints, length(x$x))
+  for (i in 2:length(BP)) {
+    Eseg <- mean(x$x[BP[i - 1]:BP[i]])
+    colseg <- i%%2 + 2
+    segments(x0 = Time[BP[i - 1]], y0 = Eseg, x1 = Time[BP[i]], y1 = Eseg, lwd = 3, col = colseg)
+  }
+  
+  if (is.null(sub2)) {
+    if (x$reject) {
+      if (length(x$BreakPoints) == 1) {
+        sub2 <- "Program suggests " %.% length(x$BreakPoints) %.% " break point."
+      } else {
+        sub2 <- "Program suggests " %.% length(x$BreakPoints) %.% " break points."
+      }
+    } else {
+      sub2 <- "Program didn't find structural breaks at the confidence level of " %.% formatC(head(x$alpha, 1)) %.% "."
     }
-    
-    if (is.null(sub2)) {
-        if (x$reject) {
-            if (length(x$BreakPoints) == 1) {
-                sub2 <- "Program suggests " %.% length(x$BreakPoints) %.% " break point."
-            } else {
-                sub2 <- "Program suggests " %.% length(x$BreakPoints) %.% " break points."
-            }
-        } else {
-            sub2 <- "Program didn't find structural breaks at the confidence level of " %.% formatC(head(x$alpha, 1)) %.% "."
-        }
-    }
-    
-    plot(Time, x$y, type = "l", ylab = ylab2, main = main2, sub = sub2, ...)
-    points(x$TimeLabel[x$Partition], x$y[x$Partition], cex = cex.PP, pch = 19, col = col.PP, bg = col.PP)
-    points(x$TimeLabel[x$BreakPoints], x$y[x$BreakPoints], cex = cex.BP, pch = 19, col = col.BP, bg = col.BP)
-    par(op)
+  }
+  
+  plot(Time, x$y, type = "l", ylab = ylab2, main = main2, sub = sub2, ...)
+  points(x$TimeLabel[x$Partition], x$y[x$Partition], cex = cex.PP, pch = 19, col = col.PP, bg = col.PP)
+  points(x$TimeLabel[x$BreakPoints], x$y[x$BreakPoints], cex = cex.BP, pch = 19, col = col.BP, bg = col.BP)
+  par(op)
 }
 
 #' @rdname PvarBreakTest
 #' @param object the object of the class \code{PvarBreakTest}.
 #' @export
 summary.PvarBreakTest <- function(object, ...) {
-    class(object) <- c("summary.PvarBreakTest", "PvarBreakTest")
-    object
+  class(object) <- c("summary.PvarBreakTest", "PvarBreakTest")
+  object
 }
 
 #' @method print print.PvarBreakTest
 print.PvarBreakTest <- function(x, ...) {
-    cat("       PvarBreakTest \n\n")
-    cat("H0: no structural change \n")
-    cat("Results: ")
-    if (x$reject) {
-        cat("H0 is rejected at the confidence level of " %.% formatC(head(x$alpha, 1)) %.% ".\n")
-    } else {
-        cat("H0 is accepted at the confidence level of " %.% formatC(head(x$alpha, 1)) %.% ".\n")
-    }
-    cat("Data: " %.% x$dname %.% ", n=" %.% length(x$x) %.% ".\n")
-    cat("The output of the test: \n")
-    print(c(x$Stat, x$CriticalValue, x$alpha, x$p.value))
+  cat("       PvarBreakTest \n\n")
+  cat("H0: no structural change \n")
+  cat("Results: ")
+  if (x$reject) {
+    cat("H0 is rejected at the confidence level of " %.% formatC(head(x$alpha, 1)) %.% ".\n")
+  } else {
+    cat("H0 is accepted at the confidence level of " %.% formatC(head(x$alpha, 1)) %.% ".\n")
+  }
+  cat("Data: " %.% x$dname %.% ", n=" %.% length(x$x) %.% ".\n")
+  cat("The output of the test: \n")
+  print(c(x$Stat, x$CriticalValue, x$alpha, x$p.value))
 }
 
 #' @method print summary.PvarBreakTest
 print.summary.PvarBreakTest <- function(x, ...) {
-    cat("The summary of PvarBreakTest:\n")
-    cat("H0: no structural change. \n")
-    cat("Results: ")
-    if (x$reject) {
-        cat("H0 is rejected at the confidence level of " %.% formatC(head(x$alpha, 1)) %.% ".\n")
+  cat("The summary of PvarBreakTest:\n")
+  cat("H0: no structural change. \n")
+  cat("Results: ")
+  if (x$reject) {
+    cat("H0 is rejected at the confidence level of " %.% formatC(head(x$alpha, 1)) %.% ".\n")
+  } else {
+    cat("H0 is accepted at the confidence level of " %.% formatC(head(x$alpha, 1)) %.% ".\n")
+  }
+  if (x$reject) {
+    if (length(x$BreakPoints) > 6) {
+      cat("Suggesting " %.% length(x$BreakPoints) %.% " break points: " %.% paste(formatC(head(x$BreakPoints, 6)), collapse = ", ") %.% 
+        ", ...\n")
     } else {
-        cat("H0 is accepted at the confidence level of " %.% formatC(head(x$alpha, 1)) %.% ".\n")
+      if (length(x$BreakPoints) == 1) {
+        cat("Suggesting " %.% length(x$BreakPoints) %.% " break point: " %.% paste(formatC(head(x$BreakPoints, 6)), collapse = ", ") %.% 
+          ".\n")
+      } else {
+        cat("Suggesting " %.% length(x$BreakPoints) %.% " break points: " %.% paste(formatC(head(x$BreakPoints, 6)), collapse = ", ") %.% 
+          ".\n")
+      }
     }
-    if (x$reject) {
-        if (length(x$BreakPoints) > 6) {
-            cat("Suggesting " %.% length(x$BreakPoints) %.% " break points: " %.% paste(formatC(head(x$BreakPoints, 6)), collapse = ", ") %.% 
-                ", ...\n")
-        } else {
-            if (length(x$BreakPoints) == 1) {
-                cat("Suggesting " %.% length(x$BreakPoints) %.% " break point: " %.% paste(formatC(head(x$BreakPoints, 6)), collapse = ", ") %.% 
-                  ".\n")
-            } else {
-                cat("Suggesting " %.% length(x$BreakPoints) %.% " break points: " %.% paste(formatC(head(x$BreakPoints, 6)), collapse = ", ") %.% 
-                  ".\n")
-            }
-        }
-    }
-    cat("Data: " %.% x$dname %.% ", n=" %.% length(x$x) %.% ".\n")
-    cat("Test's output: \n")
-    print(c(x$Stat, x$CriticalValue, x$alpha, x$p.value))
-    cat("p-avriation calculation info:\n")
-    print(unlist(x$info)[-length(x$info)])
-    if (length(x$x) > 6) {
-        cat("\nData vector (n=" %.% length(x$x) %.% "): " %.% paste(formatC(head(x$x, 6)), collapse = ", ") %.% ", ...\n")
-    } else {
-        cat("\nData vector (n=" %.% length(x$x) %.% "): " %.% paste(formatC(head(x$x, 6)), collapse = ", ") %.% ".\n")
-    }
+  }
+  cat("Data: " %.% x$dname %.% ", n=" %.% length(x$x) %.% ".\n")
+  cat("Test's output: \n")
+  print(c(x$Stat, x$CriticalValue, x$alpha, x$p.value))
+  cat("p-avriation calculation info:\n")
+  print(unlist(x$info)[-length(x$info)])
+  if (length(x$x) > 6) {
+    cat("\nData vector (n=" %.% length(x$x) %.% "): " %.% paste(formatC(head(x$x, 6)), collapse = ", ") %.% ", ...\n")
+  } else {
+    cat("\nData vector (n=" %.% length(x$x) %.% "): " %.% paste(formatC(head(x$x, 6)), collapse = ", ") %.% ".\n")
+  }
 }
 
 ############################################################################################################ 
 
 #' Bridge transformation
 #' 
-#' Transforms data by Bridge trasnformation.
+#' Transforms data by Bridge transformation.
 #' 
 #' Let \code{n} denotes the length ox \code{x}.
 #' For  each \eqn{m \in [1,n]} bridge transformations \code{BridgeT}
-#' is difined as  
+#' is defined as  
 #' 
 #' \deqn{
 #'   BridgeT(m, x) = \left\{ \sum_{i=1}^m x_i - \frac{m}{n} \sum_{i=1}^n x_i  \right\} .
@@ -210,7 +211,7 @@ print.summary.PvarBreakTest <- function(x, ...) {
 #'   BridgeT(m, x) = ( \sum^m x_i - m/n \sum^n x_i ).
 #' }
 #' 
-#' Meanwhile, the transformation with normalisation is 
+#' Meanwhile, the transformation with normalization is 
 #' 
 #' \deqn{
 #'   BridgeT(m, x) = \frac{1}{\sqrt{n var(x)}} \left\{ \sum_{i=1}^m x_i - \frac{m}{n} \sum_{i=1}^n x_i  \right\} .
@@ -221,14 +222,14 @@ print.summary.PvarBreakTest <- function(x, ...) {
 #' @seealso \code{\link{PvarBreakTest}},  \code{\link{rbridge}}
 #' 
 #' @param x x a numeric vector of data values.
-#' @param normalise \code{logical}, indicating whether the vector should be normalised. 
+#' @param normalize \code{logical}, indicating whether the vector should be normalized. 
 #' @export
-BridgeT <- function(x, normalise = TRUE) {
-    if (normalise) {
-        (cumsum(x) - seq_along(x)/length(x) * sum(x))/sqrt(length(x) * var(x))
-    } else {
-        (cumsum(x) - seq_along(x)/length(x) * sum(x))
-    }
+BridgeT <- function(x, normalize = TRUE) {
+  if (normalize) {
+    (cumsum(x) - seq_along(x)/length(x) * sum(x))/sqrt(length(x) * var(x))
+  } else {
+    (cumsum(x) - seq_along(x)/length(x) * sum(x))
+  }
 }
 ################################################################################################################ 
 
@@ -251,12 +252,12 @@ BridgeT <- function(x, normalise = TRUE) {
 #'   f(n) = b_1 + b_2 * n^b_2 .
 #' }
 #' 
-#' And the coeficients \eqn{(b_1, b_2, b_3)} are saved in vectors \code{MeanCoef} and \code{SdCoef}.
+#' And the coefficients \eqn{(b_1, b_2, b_3)} are saved in vectors \code{MeanCoef} and \code{SdCoef}.
 #' Those vectors are estimated with \code{nls} function form Monte-Carlo simulation.
 #' @rdname StatisticsPvarBreakTest
 #' @return Functions \code{PvarQuantile} and \code{PvarPvalue} returns a corresponding value quantile or the probability.
 #' Functions \code{getMean} and \code{getSd} returns a corresponding value of \code{mean} and \code{sd} statistics.
-#' Function \code{NormalisePvar} returns normalise values#' 
+#' Function \code{NormalisePvar} returns normalize values#' 
 #' @note  Arguments \code{n}, \code{stat} and \code{prob} might be vectors,
 #' but they can't be vectors simultaneously (at least one of then must be a number).
 #' @seealso  \code{\link{PvarBreakTest}}, \code{\link{PvarQuantileDF}},  \code{\link{NormalisePvar}},  \code{\link{getMean}}, \code{\link{getSd}}
@@ -266,45 +267,45 @@ BridgeT <- function(x, normalise = TRUE) {
 #' @param DF cumulative probabilities of p-variation distribution.
 #' @export
 PvarQuantile <- function(n, prob = c(0.9, 0.95, 0.99), DF = PvarQuantileDF) {
-    intervals <- cut(prob, breaks = DF$prob, include.lowest = TRUE, right = TRUE)
-    Quant <- DF$Quant[as.numeric(intervals) + 1]
-    if (any(is.na(Quant))) 
-        warning("`prob` must be between 0 and 1")
-    ans <- Quant * getSd(n) + getMean(n)
-    unname(ans)
+  intervals <- cut(prob, breaks = DF$prob, include.lowest = TRUE, right = TRUE)
+  Quant <- DF$Quant[as.numeric(intervals) + 1]
+  if (any(is.na(Quant))) 
+    warning("`prob` must be between 0 and 1")
+  ans <- Quant * getSd(n) + getMean(n)
+  unname(ans)
 }
 
 #' @rdname StatisticsPvarBreakTest 
 #' @param stat a vector of p-variation statistics.
 #' @export
 PvarPvalue <- function(n, stat, DF = PvarQuantileDF) {
-    NormStat <- NormalisePvar(stat, n)
-    intervals <- cut(NormStat, breaks = c(-Inf, DF$Quant, Inf), include.lowest = TRUE, right = FALSE)
-    ind <- as.numeric(intervals) - 1
-    ind[ind == 0] <- 1
-    1 - DF$prob[ind]
+  NormStat <- NormalisePvar(stat, n)
+  intervals <- cut(NormStat, breaks = c(-Inf, DF$Quant, Inf), include.lowest = TRUE, right = FALSE)
+  ind <- as.numeric(intervals) - 1
+  ind[ind == 0] <- 1
+  1 - DF$prob[ind]
 }
 
 #' @rdname StatisticsPvarBreakTest 
 #' @param bMean a coefficient vector that defines a function of the mean of p-variation.
 #' @export
-### get the mean of p-variation acording of BridgeT(x), then H0 is TRUE (according to n).
+### get the mean of p-variation according of BridgeT(x), then H0 is TRUE (according to n).
 getMean <- function(n, bMean = MeanCoef) {
-    unname(bMean[1] + bMean[2] * n^bMean[3])
+  unname(bMean[1] + bMean[2] * n^bMean[3])
 }
 
 #' @rdname StatisticsPvarBreakTest 
 #' @param bSd a coefficient vector that defines a function of the standard deviation of p-variation.
 #' @export
-### get the standart deviation of p-variation acording of BridgeT(x), then H0 is TRUE (according to n).
+### get the standart deviation of p-variation according of BridgeT(x), then H0 is TRUE (according to n).
 getSd <- function(n, bSd = SdCoef) {
-    unname(bSd[1] + bSd[2] * n^bSd[3])
+  unname(bSd[1] + bSd[2] * n^bSd[3])
 }
 
 #' @rdname StatisticsPvarBreakTest 
 #' @param x a numeric vector of data values.
 #' @export
-### Normalyse p-variation acording n.
+### Normalyse p-variation according n.
 NormalisePvar <- function(x, n, bMean = MeanCoef, bSd = SdCoef) {
-    (x - getMean(n, bMean))/getSd(n, bSd)
+  (x - getMean(n, bMean))/getSd(n, bSd)
 } 

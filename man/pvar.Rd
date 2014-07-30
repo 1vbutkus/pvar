@@ -24,7 +24,7 @@ pvar(x, p, TimeLabel = as.vector(time(x)), LSI = 3)
 
   \item{LSI}{a length of small interval. It must be a
   positive odd number. This parameter do not have effect on
-  final rezult, but maigth influence the speed of
+  final result, but might influence the speed of
   calculation.}
 
   \item{object}{an objct of the class \code{pvar}.}
@@ -57,7 +57,9 @@ indicates the partition that achieves the maximum.}
 Calculates p-variation of the sample.
 }
 \details{
-See (in pvar-package)...
+This function is the main function in this package. It
+calculates the p-variation of the sample. The formal
+definition are given in \code{\link{pvar-package}}.
 }
 \examples{
 ### randomised data:

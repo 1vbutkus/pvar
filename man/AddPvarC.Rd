@@ -19,13 +19,13 @@ An object of the class \code{pvar}.
 }
 \description{
 An internal function(written in C++) that merges two
-objects of pvar and efectivly recalculates the p-variation
-of joined sample.
+objects of pvar and effectively recalculates the
+p-variation of joined sample.
 }
 \details{
-This is an internal function, therfore, ussers should not
-call this sunction directly (rathfer use
-\code{\link{AddPvar}}).
+This is an internal function, therefore, users should not
+call this function directly (rather use
+\code{\link{AddPvar}} or \code{pv1 + pv2}).
 }
 \keyword{internal}
 

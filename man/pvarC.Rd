@@ -13,7 +13,7 @@ pvarC(x, p, LSI = 3L)
 
   \item{LSI}{a length of small interval. It must be a
   positive odd number. This parameter do not have effect on
-  final rezult, but maigth influence the speed of
+  final result, but might influence the speed of
   calculation.}
 }
 \value{
@@ -24,8 +24,8 @@ An internal function(written in C++) that calculates
 p-variation.
 }
 \details{
-This is a woking horse of this packages, nontheless, ussers
-should not call this sunction directly (rathfer use
+This is a waking horse of this packages, nonetheless, users
+should not call this function directly (rather use
 \code{\link{pvar}}).
 }
 \keyword{internal}

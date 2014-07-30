@@ -1,6 +1,7 @@
 #' p-variation calculation and application
 #' 
-#' This package deals with p-variation for the sequence of data values. It gives opportunity to calculate the p-variation -- this is the main purpose of this package.
+#' This package deals with p-variation for the sequence of data values. 
+#' It gives opportunity to calculate the p-variation -- this is the main purpose of this package.
 #' Moreover, it includes one example of practical application of the p-variation.
 #' 
 #' \tabular{ll}{
@@ -46,21 +47,21 @@
 #' Special thanks to Rimas Norvaiša the superviser of my studies.
 #' 
 #' @references
-#' [1] R. M. Dudley, R. Norvaisa. An Introduction to
+#' [1] R. M. Dudley, R. Norvaiša. An Introduction to
 #' p-variation and Young Integrals, Cambridge, Mass., 1998.
 #' 
-#' [2] R. M. Dudley, R. Norvaisa. Differentiability of 
+#' [2] R. M. Dudley, R. Norvaiša. Differentiability of 
 #' Six Operators on Nonsmooth Functions and p-Variation, Springer Berlin Heidelberg, 
 #' Print ISBN 978-3-540-65975-4, Lecture Notes in Mathematics Vol. 1703, 1999.
 #' 
-#' [3] R. Norvaisa, A. Rackauskas. Convergence in law of partial sum processes in p-variation norm. 
+#' [3] R. Norvaiša, A. Račkauskas. Convergence in law of partial sum processes in p-variation norm. 
 #' Lth. Math. J., 2008., Vol. 48, No. 2, 212-227.   
 #' 
 #' [4] J. Qian. The p-variation of Partial Sum Processes and the Empirical Process. 
 #' The Annals of Probability, 1998, Vol. 26, No. 3, 1370-1383.
 #'
 #' @seealso
-#' The main function is \code{\link{pvar}} - it finds p-variation and the partition that maximises \code{\link{Sum_p}} function.
+#' The main function is \code{\link{pvar}} - it finds p-variation and the partition that maximizes \code{\link{Sum_p}} function.
 #'
 #' Other important functions is \code{\link{PvarBreakTest}} it performs structural break test of vector \code{x}
 #' by calculating p-variations of \code{BridgeT(x)} (see \code{\link{BridgeT}}). 
