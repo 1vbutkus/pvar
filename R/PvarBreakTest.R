@@ -40,6 +40,20 @@
 #' @param FullInfo \code{logical}. If \code{TRUE} (the default) the function will return an object of the class \code{PvarBreakTest} 
 #' that saves all useful information. Otherwise only the statistics will by returned.
 #' @export
+#' @examples
+#' set.seed(1)
+#' MiuDiff <- 0.3
+#' x <- rnorm(250*4, rep(c(0, MiuDiff, 0, MiuDiff), each=250))
+#' plot(x, pch=19, cex=0.5, main='original data, with several shifts of mean')
+#' k <- 50
+#' moveAvg <- filter(x, rep(1/k, k))
+#' lines(time(x), moveAvg, lwd=2, col=2)
+#' legend('topleft', c('sample', 'moving average (k='%.%k%.%')'),
+#'        lty=c(NA,1), lwd=c(NA, 2), col=1:2, pch=c(19,NA), pt.cex=c(0.7,1)
+#'        ,inset = .03, bg='antiquewhite1')
+#' xtest <- PvarBreakTest(x)
+#' xtest
+#' plot(xtest)
 PvarBreakTest <- function(x, TimeLabel = as.vector(time(x)), alpha = 0.05, FullInfo = TRUE) {
   
   dname <- deparse(substitute(x))
@@ -138,13 +152,15 @@ plot.PvarBreakTest <- function(x, main1 = "Data", main2 = "Bridge transformation
 
 #' @rdname PvarBreakTest
 #' @param object the object of the class \code{PvarBreakTest}.
+#' @method summary PvarBreakTest
 #' @export
 summary.PvarBreakTest <- function(object, ...) {
   class(object) <- c("summary.PvarBreakTest", "PvarBreakTest")
   object
 }
 
-#' @method print print.PvarBreakTest
+#' @method print PvarBreakTest
+#' @export
 print.PvarBreakTest <- function(x, ...) {
   cat("       PvarBreakTest \n\n")
   cat("H0: no structural change \n")
@@ -160,6 +176,7 @@ print.PvarBreakTest <- function(x, ...) {
 }
 
 #' @method print summary.PvarBreakTest
+#' @export
 print.summary.PvarBreakTest <- function(x, ...) {
   cat("The summary of PvarBreakTest:\n")
   cat("H0: no structural change. \n")

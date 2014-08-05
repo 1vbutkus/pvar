@@ -1,5 +1,6 @@
 \name{pvar}
 \alias{plot.pvar}
+\alias{print.summary.pvar}
 \alias{pvar}
 \alias{summary.pvar}
 \title{p-variation calculation}
@@ -11,6 +12,8 @@ pvar(x, p, TimeLabel = as.vector(time(x)), LSI = 3)
 \method{plot}{pvar}(x, main = "p-variation", ylab = x$dname, sub = "p="
   \%.\% round(x$p, 5) \%.\% ", p-variation: " \%.\% formatC(x$value, 5, format =
   "f"), col.PP = 2, cex.PP = 0.5, ...)
+
+\method{print}{summary.pvar}(x, ...)
 }
 \arguments{
   \item{x}{a (non-empty) numeric vector of data values or
@@ -74,12 +77,12 @@ plot(pv)
 ### The value of p-variation is
 pv; Sum_p(x[pv$partition], 2)
 
-### The meaning of partition points:
+### The meaning of supreme partition points:
 pv.PP = pvar(x[pv$partition], TimeLabel=time(x)[pv$partition], 2)
 pv.PP == pv.PP
 op <- par(mfrow = c(2, 1))
 plot(pv, main='pvar with original data')
-plot(pv.PP, main='the same pvar without meaningless points')
+plot(pv.PP, main='the same pvar without redundant points')
 par(op)
 }
 \author{

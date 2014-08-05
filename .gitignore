@@ -7,3 +7,9 @@ man/*
 src/*.o
 src/*.so
 src/*.dll
+
+vignettes/*
+!vignettes/*.Rnw
+
+
+

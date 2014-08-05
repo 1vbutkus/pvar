@@ -56,12 +56,12 @@ Sum_p <- function(x, p, lag = 1) {
 #' ### The value of p-variation is    
 #' pv; Sum_p(x[pv$partition], 2)  
 #' 
-#' ### The meaning of partition points:
+#' ### The meaning of supreme partition points:
 #' pv.PP = pvar(x[pv$partition], TimeLabel=time(x)[pv$partition], 2)
 #' pv.PP == pv.PP
 #' op <- par(mfrow = c(2, 1))
 #' plot(pv, main='pvar with original data')
-#' plot(pv.PP, main='the same pvar without meaningless points')
+#' plot(pv.PP, main='the same pvar without redundant points')
 #' par(op)
 pvar <- function(x, p, TimeLabel = as.vector(time(x)), LSI = 3) {
   
@@ -170,16 +170,20 @@ plot.pvar <- function(x, main = "p-variation", ylab = x$dname, sub = "p=" %.% ro
   
 }
 
+
 #' @method print pvar
+#' @export
 print.pvar <- function(x, ...) {
   print(x$value)
 }
 
+#' @rdname pvar 
 #' @method print summary.pvar
+#' @export
 print.summary.pvar <- function(x, ...) {
   cat("The summary of p-variation:\n")
   cat("Value: " %.% formatC(x$value) %.% ", p = " %.% x$p %.% "\n")
-  cat("Data: " %.% x$dname %.% ", n=" %.% length(x$x) %.% "\n")
+  cat("Data: " %.% x$dname %.% ", n=" %.% (length(x$x) - 1) %.% " (+1)\n")
   
   if (length(x$x) > 6) {
     cat("\nData vector (n=" %.% length(x$x) %.% "): " %.% paste(formatC(head(x$x, 6)), collapse = ", ") %.% ", ...\n")
@@ -194,9 +198,14 @@ print.summary.pvar <- function(x, ...) {
     cat("Partition has " %.% length(x$partition) %.% " points: " %.% paste(formatC(head(x$partition, 6)), collapse = ", ") %.% 
       ".\n")
   }
-  
 }
 
+#' @method as.list pvar
+#' @export
+as.list.pvar <- function(x, ...) {
+  class(x) <- NULL
+  x
+}
 
 #' Addition of p-variation
 #' 
