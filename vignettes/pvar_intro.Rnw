@@ -6,7 +6,7 @@
 %\VignetteKeywords{string, misc}
 %\VignettePackage{pvar}
 
-
+\usepackage[utf8]{inputenc}
 
 <<setup, echo=FALSE, cache=FALSE>>=
 library("pvar")
