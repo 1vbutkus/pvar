@@ -183,11 +183,7 @@ print.pvar <- function(x, ...) {
 print.summary.pvar <- function(x, ...) {
   cat("The summary of p-variation:\n")
   cat("Value: " %.% formatC(x$value) %.% ", p = " %.% x$p %.% "\n")
-<<<<<<< HEAD
   cat("Data: " %.% x$dname %.% ", n=" %.% (length(x$x) - 1) %.% " (+1)\n")
-=======
-  cat("Data: " %.% x$dname %.% ", n=" %.% length(x$x) %.% "\n")
->>>>>>> ec03b1d371ba0361ed6e16227cd41c9347e2c5ab
   
   if (length(x$x) > 6) {
     cat("\nData vector (n=" %.% length(x$x) %.% "): " %.% paste(formatC(head(x$x, 6)), collapse = ", ") %.% ", ...\n")
@@ -202,10 +198,6 @@ print.summary.pvar <- function(x, ...) {
     cat("Partition has " %.% length(x$partition) %.% " points: " %.% paste(formatC(head(x$partition, 6)), collapse = ", ") %.% 
       ".\n")
   }
-<<<<<<< HEAD
-=======
-  
->>>>>>> ec03b1d371ba0361ed6e16227cd41c9347e2c5ab
 }
 
 #' @method as.list pvar

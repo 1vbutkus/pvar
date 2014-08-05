@@ -269,16 +269,12 @@ BridgeT <- function(x, normalize = TRUE) {
 #'   f(n) = b_1 + b_2 * n^b_2 .
 #' }
 #' 
-#' And the coefficients \eqn{(b_1, b_2, b_3)} are saved in vectors \code{MeanCoef} and \code{SdCoef}.
+#' The coefficients \eqn{(b_1, b_2, b_3)} are saved in vectors \code{MeanCoef} and \code{SdCoef}.
 #' Those vectors are estimated with \code{nls} function form Monte-Carlo simulation.
 #' @rdname StatisticsPvarBreakTest
 #' @return Functions \code{PvarQuantile} and \code{PvarPvalue} returns a corresponding value quantile or the probability.
 #' Functions \code{getMean} and \code{getSd} returns a corresponding value of \code{mean} and \code{sd} statistics.
-<<<<<<< HEAD
 #' Function \code{NormalisePvar} returns normalize values. 
-=======
-#' Function \code{NormalisePvar} returns normalize values#' 
->>>>>>> ec03b1d371ba0361ed6e16227cd41c9347e2c5ab
 #' @note  Arguments \code{n}, \code{stat} and \code{prob} might be vectors,
 #' but they can't be vectors simultaneously (at least one of then must be a number).
 #' @seealso  \code{\link{PvarBreakTest}}, \code{\link{PvarQuantileDF}},  
