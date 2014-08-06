@@ -18,13 +18,13 @@ plot(pv)
 
 ## ----pvar_partition------------------------------------------------------
 pv.PP = pvar(x[pv$partition], TimeLabel=time(x)[pv$partition], 2)
-plot(pv.PP, main='the same pvar without redundant points')
+plot(pv.PP, main='The same pvar without redundant points')
 
 
 ## ----pvar_add------------------------------------------------------------
 x = rwiener(1000)
 pv1 = pvar(x[1:500], 2)
-pv2 = pvar(x[500:1000], 2)
+pv2 = pvar(x[500:length(x)], 2)
 sum_pv1_pv2 = pv1 + pv2
 
 
@@ -44,7 +44,7 @@ x <- rnorm(250*4, rep(c(0, MiuDiff, 0, MiuDiff), each=250))
 
 
 ## ----test_plotdata, echo=FALSE-------------------------------------------
-plot(x, pch=19, cex=0.5, main="original data, with several shifts in mean")
+plot(x, pch=19, cex=0.5, main="Original data, with several shifts in mean")
 k <- 50
 moveAvg <- filter(x, rep(1/k, k))
 lines(time(x), moveAvg, lwd=2, col=2)

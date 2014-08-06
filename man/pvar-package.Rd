@@ -4,19 +4,21 @@
 \alias{pvar-package}
 \title{p-variation calculation and application}
 \description{
-This package deals with p-variation for the sequence of
-data values. It gives opportunity to calculate the
-p-variation -- this is the main purpose of this package.
-Moreover, it includes one example of practical application
-of the p-variation.
+This package deals with p-variation for the sample (i.e.
+the sequence of data values). It gives opportunity to
+calculate the p-variation for the sample -- this is the
+main purpose of this package. Nonetheless, it could be used
+to calculate p-variation for arbitrary piecewise monotonic
+function as well. Moreover, the package includes one
+example of practical application of the p-variation.
 }
 \details{
 \tabular{ll}{ Package: \tab pvar\cr Type: \tab Package\cr
-Version: \tab 2\cr Date: \tab 2014-08-02\cr License: \tab
+Version: \tab 2\cr Date: \tab 2014-08-06\cr License: \tab
 GPL-2\cr Institution: \tab Vilnius University Faculty of
 Mathematics and Informatics \cr }
 
-This package is about p-variation. It deals only of
+This package is about p-variation. It deals with
 p-variation of a finite sample data values. To be precise,
 lets star with the definitions. Originally p-variation is
 defined for a functions.
@@ -26,9 +28,9 @@ and \eqn{0 < p < \infty}{0 < p < \infty} p-variation is
 defined as
 
 \deqn{ v_p(f) = \sup \left\{ \sum_{i=1}^m |f(t_i) -
-f(t_{i-1})|^p : 0=t_0<t_1<\dots<t_m=1 \right\} }{ v_p(f) =
-sup { \sum |f(t_i) - f(t_{i-1})|^p : 0=t_0<t_1<\dots<t_m=1}
-}
+f(t_{i-1})|^p : 0=t_0<t_1<\dots<t_m=1, m \geq 1 \right\} }{
+v_p(f) = sup { \sum |f(t_i) - f(t_{i-1})|^p :
+0=t_0<t_1<\dots<t_m=1, m>=1} }
 
 Analogically, for a sequences of values \eqn{X_0, X_1,...,
 X_n}, the p-variation is defined as \deqn{
@@ -38,9 +40,9 @@ k=1,2,...,n \right\} }{ v_p(\{X_i\}_{i=0}^n) = max { \sum
 |X_{j_i}-X_{j_{i-1}}|^p :0=j_0<j_1<\dots<j_k=n, \;
 k=1,2,\dots,n } }
 
-The points \eqn{0=t_0<t_1<\dots<t_m=1}(or
+The points \eqn{0=t_0<t_1<\dots<t_m=1} (or
 \eqn{0=j_0<j_1<\dots<j_k=n}) that achieves the maximums is
-called p-variation partition.
+called a supreme partition (or just a partition for short).
 
 There are two main functions that this package is all
 about, namely it is \code{\link{pvar}} and
@@ -59,7 +61,7 @@ illustrating purposes.
 Author and Maintainer: Vygantas Butkus
 <Vygantas.Butkus@gmail.com>.
 
-Special thanks to Rimas Norvaiša the superviser of my
+Special thanks to Rimas Norvaiša the supervisor of my
 studies.
 }
 \references{

@@ -367,13 +367,18 @@ void PvarByMerging(PrtList& prt,  const double& p, PrtList::iterator a, PrtList:
 
 //' Change Points of a \code{numeric} vector
 //'
-//' Finds changes points in the \code{numeric} vector.
+//' Finds changes points (i.e. corners) in the \code{numeric} vector.
 //'
 //' The end points of the vector will be always included in the results. 
 //'
 //' @return The vector of index of change points.
 //' @param x \code{numeric} vector.
 //' @export
+//' @examples
+//' x <- rwiener(100)
+//' cid <- ChangePoints(x)
+//' plot(x, type="l")
+//' points(time(x)[cid], x[cid], cex=0.5, col=2, pch=19)
 //[[Rcpp::export("ChangePoints")]]
 IntegerVector ChangePoints_fromR(const NumericVector& x){
   

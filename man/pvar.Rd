@@ -1,6 +1,5 @@
 \name{pvar}
 \alias{plot.pvar}
-\alias{print.summary.pvar}
 \alias{pvar}
 \alias{summary.pvar}
 \title{p-variation calculation}
@@ -12,8 +11,6 @@ pvar(x, p, TimeLabel = as.vector(time(x)), LSI = 3)
 \method{plot}{pvar}(x, main = "p-variation", ylab = x$dname, sub = "p="
   \%.\% round(x$p, 5) \%.\% ", p-variation: " \%.\% formatC(x$value, 5, format =
   "f"), col.PP = 2, cex.PP = 0.5, ...)
-
-\method{print}{summary.pvar}(x, ...)
 }
 \arguments{
   \item{x}{a (non-empty) numeric vector of data values or
@@ -62,7 +59,7 @@ Calculates p-variation of the sample.
 \details{
 This function is the main function in this package. It
 calculates the p-variation of the sample. The formal
-definition are given in \code{\link{pvar-package}}.
+definition is given in \code{\link{pvar-package}}.
 }
 \examples{
 ### randomised data:
@@ -89,7 +86,7 @@ par(op)
 Vygantas Butkus <Vygantas.Butkus@gmail.com>
 }
 \seealso{
-One of the p-variations application is realized in
-\code{\link{PvarBreakTest}} function.
+\code{\link{IsEqualPvar}}, \code{\link{AddPvar}},
+\code{\link{PvarBreakTest}}.
 }
 

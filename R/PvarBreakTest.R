@@ -1,7 +1,7 @@
 
 #' Structural break test
 #' 
-#' This function performs structural break test based on p-variation. 
+#' This function performs structural break test that is based on p-variation. 
 #' 
 #' Lets \code{x} be a data that should be tested of structural breaks. 
 #' Then the p-variation of the \code{BridgeT(x)} with \code{p=4} is the test's statistics.
@@ -27,7 +27,10 @@
 #' \item{BreakPoints}{the indexes of break points suggestion.}
 #' \item{Partition}{a vector of indexes that indicates the partition of \code{y} that achieves the p-variation maximum.}
 #' @author Vygantas Butkus <Vygantas.Butkus@@gmail.com>
-#' @references R. Norvaisa, A. Rackauskas. Convergence in law of partial sum processes in p-variation norm. 
+#' @references 
+#' The test was proposed by A. Rackaskas. The test is based on the results given in the flowing article
+#' 
+#' [1] R. Norvaisa, A. Rackauskas. Convergence in law of partial sum processes in p-variation norm. 
 #' Lth. Math. J., 2008., Vol. 48, No. 2, 212-227.
 #' 
 #' @seealso Tests statistics is  \code{\link{pvar}} of the data \code{BridgeT(x)}(see  \code{\link{BridgeT}}) with (p=4).
@@ -44,6 +47,7 @@
 #' set.seed(1)
 #' MiuDiff <- 0.3
 #' x <- rnorm(250*4, rep(c(0, MiuDiff, 0, MiuDiff), each=250))
+#' 
 #' plot(x, pch=19, cex=0.5, main='original data, with several shifts of mean')
 #' k <- 50
 #' moveAvg <- filter(x, rep(1/k, k))
@@ -51,8 +55,8 @@
 #' legend('topleft', c('sample', 'moving average (k='%.%k%.%')'),
 #'        lty=c(NA,1), lwd=c(NA, 2), col=1:2, pch=c(19,NA), pt.cex=c(0.7,1)
 #'        ,inset = .03, bg='antiquewhite1')
+#'
 #' xtest <- PvarBreakTest(x)
-#' xtest
 #' plot(xtest)
 PvarBreakTest <- function(x, TimeLabel = as.vector(time(x)), alpha = 0.05, FullInfo = TRUE) {
   
@@ -117,7 +121,7 @@ PvarBreakTest <- function(x, TimeLabel = as.vector(time(x)), alpha = 0.05, FullI
 #' @param cex.PP the cex of partition points.
 #' @param col.BP the color of break points.
 #' @param cex.BP the cex of break points.
-#' @param \dots further arguments, pased to \code{print}. 
+#' @param \dots further arguments, passed to \code{print}. 
 #' @export
 plot.PvarBreakTest <- function(x, main1 = "Data", main2 = "Bridge transformation", ylab1 = x$dname, ylab2 = "BridgeT(" %.% x$dname %.% 
   ")", sub2 = NULL, col.PP = 3, cex.PP = 0.5, col.BP = 2, cex.BP = 1, cex.DP = 0.5, ...) {
@@ -241,6 +245,14 @@ print.summary.PvarBreakTest <- function(x, ...) {
 #' @param x x a numeric vector of data values.
 #' @param normalize \code{logical}, indicating whether the vector should be normalized. 
 #' @export
+#' @examples
+#' x <- rnorm(1000)
+#' Bx <- BridgeT(x, FALSE)
+#' 
+#' op <- par(mfrow=c(2,1),mar=c(4,4,2,1))
+#' plot(cumsum(x), type="l")
+#' plot(Bx, type="l")
+#' par(op)
 BridgeT <- function(x, normalize = TRUE) {
   if (normalize) {
     (cumsum(x) - seq_along(x)/length(x) * sum(x))/sqrt(length(x) * var(x))
@@ -260,9 +272,9 @@ BridgeT <- function(x, normalize = TRUE) {
 #' The data frame \code{\link{PvarQuantileDF}} saves the results of Monte-Carlo simulation.
 #' 
 #' Meanwhile, \code{MeanCoef} and \code{SdCoef} defines the coefficients of functional 
-#' form (according to \code{n}) of \code{mean} and \code{sd} statistics.
+#' form (conditional on \code{n}) of \code{mean} and \code{sd} statistics.
 #' 
-#' A functianal form of \code{mean} and \code{sd} statistics are the same, namely
+#' A functional form of \code{mean} and \code{sd} statistics are the same, namely
 #' \deqn{
 #'   f(n) = b_1 + b_2 n^b_2 .
 #' }{
@@ -282,7 +294,7 @@ BridgeT <- function(x, normalize = TRUE) {
 #' 
 #' @param n a positive integer indicating the length of data vector.
 #' @param prob cumulative probabilities of p-variation distribution.
-#' @param DF cumulative probabilities of p-variation distribution.
+#' @param DF a \code{data.frame} that links \code{prob} and \code{stat} .
 #' @export
 PvarQuantile <- function(n, prob = c(0.9, 0.95, 0.99), DF = PvarQuantileDF) {
   intervals <- cut(prob, breaks = DF$prob, include.lowest = TRUE, right = TRUE)

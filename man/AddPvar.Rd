@@ -12,7 +12,8 @@ AddPvar(PV1, PV2, AddIfPossible = TRUE)
 
   \item{AddIfPossible}{\code{logical}. If TRUE (the
   default), then is is assumed, that two samples has common
-  point.}
+  point. So, the end of PV1 and the begging of PV2 will be
+  treated as one point if it has the same value.}
 }
 \value{
 An object of the class \code{pvar}. See \code{\link{pvar}}.
@@ -22,7 +23,7 @@ Merges two objects of p-variation and effectively
 recalculates the p-variation of joined sample.
 }
 \details{
-Note: a short form of \code{AddPvar(pv1, PV2} is \code{PV1
+Note: a short form of \code{AddPvar(PV1, PV2} is \code{PV1
 + PV2}.
 }
 \examples{

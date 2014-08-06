@@ -36,8 +36,8 @@
 #' \code{rcumbin} generate partial sums process from random variables with values \code{-1,  0, 1}.
 #' 
 #' @rdname ProcessGenerators
-#' @return A time series containing a simulated realization of random procces. 
-#' The length of time series is \code{frequency+1}, since zero is always included in the begining of the sample.
+#' @return A time series containing a simulated realization of random processes. 
+#' The length of time series is \code{frequency+1}, since zero is always included in the beginning of the sample.
 #' @param frequency a number specifying the size of trajectory vector. The trajectory will start at point 0 
 #' and will have \code{frequency} more observations. The length of the results will be \code{frequency+1} .  
 #' @param end a number. The end point of the process in the 'time' scale.

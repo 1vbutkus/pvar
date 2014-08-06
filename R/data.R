@@ -17,7 +17,7 @@
 #' MeanCoef
 #' SdCoef
 #' @format the \code{PvarQuantileDF} is a \code{data.frame} with fields \code{prob} an {Qaunt}. 
-#' The field \code{brob} represent the probability and \code{Quant} gives corespondingly quantile.
+#' The field \code{brob} represent the probability and \code{Quant} gives correspondingly quantile.
 #' \code{MeanCoef} and \code{SdCoef} is a named vector used in functions \code{\link{getMean}} and \code{\link{getSd}}. 
 #'     
 #' @source Monte-Carlo simulation

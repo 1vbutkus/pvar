@@ -3,18 +3,20 @@
 #' It is the sum of absolute differences in the power of p.
 #' 
 #' This is a function that must be maximized by taking a proper subset of \code{x}, i.e. if \code{prt} is a
-#' p-variation partition of sample \code{x}, then \code{Sum_p(x[prt], p) == pvar(x, p)}.
+#' p-variation partition of sample \code{x}, then \code{Sum_p(x[prt], p) == pvar(x, p)$value}.
 #'
 #' @param x a numeric vector of data values.
 #' @param p a number indicating the power in summing function.
-#' @param lag a number, indicating the lag.
+#' @param lag a number, indicating the lag of differences.
 #' @export 
 #' @return The number equal to \code{sum((abs(diff(x, lag)))^p)}
 #' @seealso \code{\link{pvar}}
 #' @examples
 #' x = rbridge(1000)
-#' pv = pvar(x, 2); pv  
+#' pv = pvar(x, 2); pv 
+#' # Sum_p in supreme partition and the value form pvar must match
 #' Sum_p(x[pv$partition], 2)
+#' pv
 Sum_p <- function(x, p, lag = 1) {
   sum((abs(diff(x, lag)))^p)
 }
@@ -25,10 +27,10 @@ Sum_p <- function(x, p, lag = 1) {
 #' Calculates p-variation of the sample. 
 #' 
 #' This function is the main function in this package. It calculates the p-variation of the sample. 
-#' The formal definition are given in \code{\link{pvar-package}}.
+#' The formal definition is given in \code{\link{pvar-package}}.
 #' 
 #' @param x a (non-empty) numeric vector of data values or an object of the class \code{pvar}.
-#' @param p a positive number indicating the power p in p-variation. 
+#' @param p a positive number indicating the power \code{p} in p-variation. 
 #' @param TimeLabel numeric, a time index of \code{x}. Used only for plotting. 
 #' @param LSI a length of small interval. It must be a positive odd number. 
 #' This parameter do not have effect on final result, 
@@ -42,7 +44,8 @@ Sum_p <- function(x, p, lag = 1) {
 #' \item{dname}{a name of data vector (optional).}
 #' \item{TimeLabel}{a time label of \code{x} (optional).}
 #' @author Vygantas Butkus <Vygantas.Butkus@@gmail.com>
-#' @seealso One of the p-variations application is realized in \code{\link{PvarBreakTest}} function. 
+#' @seealso \code{\link{IsEqualPvar}}, \code{\link{AddPvar}}, \code{\link{PvarBreakTest}}.
+#'
 #' @examples
 #' ### randomised data:
 #' x = rbridge(1000)
@@ -59,9 +62,9 @@ Sum_p <- function(x, p, lag = 1) {
 #' ### The meaning of supreme partition points:
 #' pv.PP = pvar(x[pv$partition], TimeLabel=time(x)[pv$partition], 2)
 #' pv.PP == pv.PP
-#' op <- par(mfrow = c(2, 1))
+#' op <- par(mfrow = c(2, 1), mar=c(2, 4, 4, 1))
 #' plot(pv, main='pvar with original data')
-#' plot(pv.PP, main='the same pvar without redundant points')
+#' plot(pv.PP, main='The same pvar without redundant points')
 #' par(op)
 pvar <- function(x, p, TimeLabel = as.vector(time(x)), LSI = 3) {
   
@@ -177,13 +180,13 @@ print.pvar <- function(x, ...) {
   print(x$value)
 }
 
-#' @rdname pvar 
+
 #' @method print summary.pvar
 #' @export
 print.summary.pvar <- function(x, ...) {
   cat("The summary of p-variation:\n")
   cat("Value: " %.% formatC(x$value) %.% ", p = " %.% x$p %.% "\n")
-  cat("Data: " %.% x$dname %.% ", n=" %.% (length(x$x) - 1) %.% " (+1)\n")
+  cat("Data: " %.% x$dname %.% ", n = " %.% (length(x$x) - 1) %.% " (+1)\n")
   
   if (length(x$x) > 6) {
     cat("\nData vector (n=" %.% length(x$x) %.% "): " %.% paste(formatC(head(x$x, 6)), collapse = ", ") %.% ", ...\n")
@@ -211,11 +214,12 @@ as.list.pvar <- function(x, ...) {
 #' 
 #' Merges two objects of p-variation and effectively recalculates the p-variation of joined sample.
 #' 
-#' Note: a short form of \code{AddPvar(pv1, PV2} is \code{PV1 + PV2}. 
+#' Note: a short form of \code{AddPvar(PV1, PV2} is \code{PV1 + PV2}. 
 #' 
 #' @param PV1 an object of the class \code{pvar}. 
 #' @param PV2 an object of the class \code{pvar}, which has the same \code{p} value as PV1 object.
-#' @param AddIfPossible \code{logical}. If TRUE (the default), then is is assumed, that two samples has common point. 
+#' @param AddIfPossible \code{logical}. If TRUE (the default), then is is assumed, that two samples has common point. So,
+#' the end of PV1 and the begging of PV2 will be treated as one point if it has the same value.
 #' @export
 #' @return An object of the class \code{pvar}. See \code{\link{pvar}}.
 #' @examples
@@ -298,12 +302,19 @@ SafeNearComparison <- function(...) all(isTRUE(all.equal(...)))
 #' in the points of \code{partition} (the index of partitions are not necessary the same).
 #' All other tributes like \code{dname} or \code{TimeLabel} are not important.
 #' 
-#' @param PV1 an object of the class \code{pvar}. 
-#' @param PV2 an object of the class \code{pvar}. 
+#' @param pv1 an object of the class \code{pvar}. 
+#' @param pv2 an object of the class \code{pvar}. 
 #' @export 
-IsEqualPvar <- function(PV1, PV2) {
+#' @examples
+#' x <- rwiener(100)
+#' pv1 <- pvar(x, 2)
+#' pv2 <- pvar(x[1:50], 2) + pvar(x[50:101], 2)
+#' IsEqualPvar(pv1, pv2)
+IsEqualPvar <- function(pv1, pv2) {
   
-  SafeNearComparison(unname(PV1$value), unname(PV2$value)) & SafeNearComparison(as.vector(PV1$p), as.vector(PV2$p)) & SafeNearComparison(as.vector(PV1$x), 
-    as.vector(PV2$x)) & SafeNearComparison(as.vector(PV1$x[PV1$partition]), as.vector(PV2$x[PV2$partition]))
+  SafeNearComparison(unname(pv1$value), unname(pv2$value)) & 
+    SafeNearComparison(as.vector(pv1$p), as.vector(pv2$p)) & 
+    SafeNearComparison(as.vector(pv1$x), as.vector(pv2$x)) & 
+    SafeNearComparison(as.vector(pv1$x[pv1$partition]), as.vector(pv2$x[pv2$partition]))
   
 } 
